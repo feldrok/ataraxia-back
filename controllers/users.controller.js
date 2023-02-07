@@ -18,7 +18,6 @@ const controller = {
             is_admin: false,
             is_verified: true,
             verify_code: crypto.randomBytes(10).toString('hex'),
-            password: bcryptjs.hashSync(req.body.password, 10),
         }
         try {
             const createdUser = await User.create(user)
