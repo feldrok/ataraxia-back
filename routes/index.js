@@ -1,3 +1,4 @@
+import categories from './categories.route.js'
 import express from 'express'
 import products from './products.route.js'
 import users from './users.route.js'
@@ -10,5 +11,6 @@ router.get('/', function (req, res, next) {
 
 router.use('/users', users)
 router.use('/products', products)
+router.use('/categories', categories)
 
 export default router

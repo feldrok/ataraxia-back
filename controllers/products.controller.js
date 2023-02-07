@@ -12,7 +12,7 @@ const controller = {
             if (products.length > 0) {
                 req.body.succes = true
                 req.body.sc = 200
-                req.body.data = ['Products retrieved successfully', products]
+                req.body.data = products
                 return defaultResponse(req, res)
             } else if (products.length === 0) {
                 req.body.succes = false
@@ -31,7 +31,7 @@ const controller = {
             if (product) {
                 req.body.succes = true
                 req.body.sc = 200
-                req.body.data = ['Product retrieved successfully', product]
+                req.body.data = product
                 return defaultResponse(req, res)
             } else {
                 req.body.succes = false
