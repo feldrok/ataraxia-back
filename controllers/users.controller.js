@@ -77,7 +77,6 @@ const controller = {
 
                 user = {
                     mail: user.mail,
-                    photo: user.photo,
                     id: user.id
                 }
                 req.body.success = true
