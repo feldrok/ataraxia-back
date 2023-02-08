@@ -28,6 +28,29 @@ const controller = {
             next(error)
         }
     },
+    deleteOneProduct: async (req, res, next) => {
+        try {
+            const { id } = req.params
+            await Cart.findByIdAndDelete(id)
+            res.status(200).json({
+                success: true,
+                message: 'Producto eliminado correctamente',
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+    emptyCart: async (req, res, next) => {
+        try {
+            await Cart.deleteMany({ products })
+            res.status(200).json({
+                success: true,
+                message: 'El carrito está vacío',
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 export default controller
