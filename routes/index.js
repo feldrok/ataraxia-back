@@ -3,6 +3,7 @@ import express from 'express'
 import products from './products.route.js'
 import users from './users.route.js'
 import orders from './order.route.js'
+import mercadopago from './mercadopago.route.js'
 const router = express.Router()
 
 /* GET home page. */
@@ -14,5 +15,6 @@ router.use('/users', users)
 router.use('/checkout', orders)
 router.use('/products', products)
 router.use('/categories', categories)
+router.use('/payment', mercadopago)
 
 export default router
