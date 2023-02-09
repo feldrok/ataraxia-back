@@ -75,7 +75,6 @@ const controller = {
             if (verified) {
                 await User.findOneAndUpdate(
                     { mail: user.mail },
-                    { is_online: true },
                     { new: true }
                 )
                 let token = jwt.sign({ id: user.id }, process.env.KEY_JWT, {

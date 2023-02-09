@@ -1,5 +1,5 @@
 import accountExistsSignIn from '../middlewares/accountExistsSignIn.js'
-import accountExistsSignUp from '../middlewares/accountExistsSignup.js'
+import accountExistsSignUp from '../middlewares/accountExistsSignUp.js'
 import accountHasBeenVerified from '../middlewares/accountHasBeenVerified.js'
 import controller from '../controllers/users.controller.js'
 import { createSchema } from '../schemas/users.schema.js'
