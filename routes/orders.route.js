@@ -1,6 +1,6 @@
-import controller from "../controllers/order.controller.js"
-import { schema } from '../schemas/order.shchema.js'
+import controller from '../controllers/orders.controller.js'
 import express from 'express'
+import { schema } from '../schemas/order.shchema.js'
 import validator from '../middlewares/validator.js'
 const router = express.Router()
 
