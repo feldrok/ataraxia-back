@@ -2,24 +2,23 @@ import { Cart } from '../models/Cart.model.js'
 import { User } from '../models/User.model.js'
 
 const controller = {
-    addProducts: async (req, res, next) => {
+    createCart: async (req, res, next) => {
         try {
-            let addProduct = await Cart.create(products)
-            req.body.succes = true
-            req.body.sc = 200
-            req.body.data = 'Producto añadido correctamente'
-            return addProduct
+            let addProducts = await Cart.create(req.body)
+            console.log('xd')
+            return addProducts
         } catch (err) {
+            console.log('noup')
             next(err)
         }
     },
     addOneProduct: async (req, res, next) => {
-        const quantity = req.body
+        const user = req.body
         try {
-            let addOneProduct = await Cart.findOneAndUpdate(
-                { quantityNumber: quantity.products.quantity },
-                { $set: quantity }
-            )
+            let addOneProduct = await Cart.findOneAndUpdate(user.products, {
+                $set: user.products,
+            })
+            console.log(addOneProduct)
             return res.status(200).json({
                 succes: true,
                 message: addOneProduct,
@@ -42,7 +41,7 @@ const controller = {
     },
     emptyCart: async (req, res, next) => {
         try {
-            await Cart.deleteMany({ products })
+            await Cart.deleteMany(req.body.products)
             res.status(200).json({
                 success: true,
                 message: 'El carrito está vacío',
