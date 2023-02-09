@@ -1,3 +1,4 @@
+import defaultResponse from '../config/defaultResponse.js'
 import { Cart } from '../models/Cart.model.js'
 import { User } from '../models/User.model.js'
 
@@ -5,8 +6,10 @@ const controller = {
     createCart: async (req, res, next) => {
         try {
             let addProducts = await Cart.create(req.body)
-            console.log('xd')
-            return addProducts
+            req.body.success = true
+            req.body.sc = 201
+            req.body.data = 'carro creado'
+            return defaultResponse(req, res)
         } catch (err) {
             console.log('noup')
             next(err)
@@ -15,8 +18,8 @@ const controller = {
     addOneProduct: async (req, res, next) => {
         const user = req.body
         try {
-            let addOneProduct = await Cart.findOneAndUpdate(user.products, {
-                $set: user.products,
+            let addOneProduct = await Cart.findOneAndUpdate(user, {
+                $set: products,
             })
             console.log(addOneProduct)
             return res.status(200).json({
