@@ -10,7 +10,7 @@ const controller = {
     signup: async (req, res, next) => {
         const user = {
             name: req.body.name,
-            last_name: req.body.lastName,
+            lastName: req.body.lastName,
             dni: req.body.dni,
             mail: req.body.mail,
             password: bcryptjs.hashSync(req.body.password, 10),
@@ -25,7 +25,7 @@ const controller = {
             req.body.succes = true
             req.body.sc = 201
             req.body.data = 'Usuario creado con éxito!'
-            await sgMail.send(message)
+/*             await sgMail.send(message) */
             return defaultResponse(req, res)
         } catch (error) {
             next(error)

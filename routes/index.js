@@ -7,5 +7,6 @@ router.get('/', function (req, res, next) {
 })
 
 router.use('/users', users)
+router.use("/auth", users)
 
 export default router
