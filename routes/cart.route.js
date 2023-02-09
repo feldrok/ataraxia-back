@@ -1,0 +1,18 @@
+import { createSchema, deleteProductSchema, updateSchema } from '../schemas/cart.schema.js'
+
+import controller from '../controllers/cart.controller.js'
+import express from 'express'
+import validator from '../middlewares/validator.js'
+
+const router = express.Router()
+
+const { create, get_user_cart, update_cart, delete_product, empty_cart } =
+    controller
+
+router.post('/', validator(createSchema), create)
+router.get('/:id', get_user_cart)
+router.put('/update/:id', validator(updateSchema), update_cart)
+router.put('/delete/:id', validator(deleteProductSchema), delete_product)
+router.put('/empty/:id', empty_cart)
+
+export default router
