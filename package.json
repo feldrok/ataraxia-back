@@ -16,10 +16,12 @@
         "express": "~4.16.1",
         "joi-oid": "^1.1.2",
         "jsonwebtoken": "^9.0.0",
+        "mercadopago": "^1.5.14",
         "mongoose": "^6.9.0",
         "morgan": "~1.9.1",
         "nodemon": "^2.0.20",
         "passport": "^0.6.0",
-        "passport-jwt": "^4.0.1"
+        "passport-jwt": "^4.0.1",
+        "readdirp": "^3.6.0"
     }
 }

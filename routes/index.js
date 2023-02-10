@@ -4,6 +4,7 @@ import orders from './orders.route.js'
 import products from './products.route.js'
 import routerCart from './cart.route.js'
 import users from './users.route.js'
+import mercadopago from './mercadopago.route.js'
 const router = express.Router()
 
 router.get('/', function (req, res, next) {
@@ -16,5 +17,6 @@ router.use('/categories', categories)
 router.use('/cart', routerCart)
 router.use("/auth", users)
 router.use('/checkout', orders)
+router.use('/payment', mercadopago)
 
 export default router
