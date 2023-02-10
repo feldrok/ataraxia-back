@@ -1,12 +1,8 @@
 import Joi from 'joi-oid'
 
 export const createSchema = Joi.object({
-    products: Joi.array().items(
-        Joi.object({
-            product_id: Joi.objectId().required(),
-            quantity: Joi.number().required(),
-        })
-    ),
+    product_id: Joi.objectId().required(),
+    quantity: Joi.number().required(),
     user_id: Joi.objectId(),
     total_price: Joi.number(),
 })

@@ -2,11 +2,7 @@ import mercadopago from "mercadopago"
 
 mercadopago.configure({ access_token: process.env.MP_KEY })
 export const createOrder = async (req, res, next) => {
-
     const cart = req.body
-
-    console.log(cart);
-
     let preference = {
         items: [
             {

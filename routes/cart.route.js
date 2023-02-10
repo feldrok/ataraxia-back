@@ -10,10 +10,10 @@ const { create, add_product_to_cart, get_user_cart, update_cart, delete_product,
     controller
 
 router.post('/', validator(createSchema), create)
-router.get('/:id', get_user_cart)
-router.put('/add/:id', validator(updateSchema), add_product_to_cart)
-router.put('/update/:id', validator(updateSchema), update_cart)
-router.put('/delete/:id', validator(deleteProductSchema), delete_product)
-router.put('/empty/:id', empty_cart)
+router.get('/', get_user_cart)
+router.put('/add', validator(updateSchema), add_product_to_cart)
+router.put('/update', validator(updateSchema), update_cart)
+router.put('/delete', validator(deleteProductSchema), delete_product)
+router.put('/empty', empty_cart)
 
 export default router

@@ -5,27 +5,26 @@ import defaultResponse from '../config/defaultResponse.js'
 const controller = {
     create: async (req, res, next) => {
         try {
-            const { user_id, products } = req.body
-            const productsIds = req.body.products
-                .filter((product) => product.product_id)
-                .map((product) => product.product_id)
+            const { user } = req
+            const { product_id, quantity } = req.body
             const productsPrice = await (
-                await Product.find({ _id: { $in: productsIds } })
+                await Product.find({ _id: { $in: product_id } })
             ).map((product) => product.price)
-            const productsQuantity = req.body.products
-                .filter((product) => product.quantity)
-                .map((product) => product.quantity)
             const total = productsPrice.reduce(
-                (total, price, index) =>
-                    total + price * productsQuantity[index],
+                (total, price) => total + price * quantity,
                 0
             )
             const cart = await Cart.create({
-                user_id: user_id,
-                products: products,
+                user_id: user.id,
+                products: [
+                    {
+                        product_id: product_id,
+                        quantity: quantity,
+                    }
+                ],
                 total_price: total,
             })
-            req.body.succes = true
+            req.body.success = true
             req.body.sc = 201
             req.body.data = cart
             return defaultResponse(req, res)
@@ -35,11 +34,11 @@ const controller = {
     },
     get_user_cart: async (req, res, next) => {
         try {
-            const { id } = req.params
-            const cart = await Cart.find({ user_id: id }).populate(
+            const { user } = req
+            const cart = await Cart.find({ user_id: user.id }).populate(
                 'products.product_id'
             )
-            req.body.succes = true
+            req.body.success = true
             req.body.sc = 200
             req.body.data = cart
             return defaultResponse(req, res)
@@ -49,9 +48,9 @@ const controller = {
     },
     add_product_to_cart: async (req, res, next) => {
         try {
-            const { id } = req.params
+            const { user } = req
             const { product_id, quantity } = req.body
-            let cart = await Cart.find({ user_id: id }).populate(
+            let cart = await Cart.find({ user_id: user.id }).populate(
                 'products.product_id'
             )
             const cartProducts = cart[0].products.map(
@@ -61,7 +60,7 @@ const controller = {
                 (product) => product._id.toString() === product_id
             )
             if (updatedProduct) {
-                let cart = await Cart.find({ user_id: id }).populate(
+                let cart = await Cart.find({ user_id: user.id }).populate(
                     'products.product_id'
                 )
                 const updatedCart = cart[0].products.map((product) => {
@@ -78,11 +77,11 @@ const controller = {
                     }
                 })
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: id },
+                    { user_id: user.id },
                     { $set: { products: updatedCart } },
                     { new: true }
                 )
-                cart = await Cart.find({ user_id: id }).populate(
+                cart = await Cart.find({ user_id: user.id }).populate(
                     'products.product_id'
                 )
                 const productsPrice = await (
@@ -97,17 +96,17 @@ const controller = {
                     0
                 )
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: id },
+                    { user_id: user.id },
                     { $set: { products: updatedCart, total_price: total } },
                     { new: true }
                 )
-                req.body.succes = true
+                req.body.success = true
                 req.body.sc = 200
                 req.body.data = cart
                 return defaultResponse(req, res)
             } else {
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: id },
+                    { user_id: user.id },
                     {
                         $push: {
                             products: {
@@ -118,7 +117,7 @@ const controller = {
                     },
                     { new: true }
                 )
-                req.body.succes = true
+                req.body.success = true
                 req.body.sc = 200
                 req.body.data = cart
                 return defaultResponse(req, res)
@@ -129,9 +128,9 @@ const controller = {
     },
     update_cart: async (req, res, next) => {
         try {
-            const { id } = req.params
+            const { user } = req
             const { product_id, quantity } = req.body
-            let cart = await Cart.find({ user_id: id }).populate(
+            let cart = await Cart.find({ user_id: user.id }).populate(
                 'products.product_id'
             )
             const cartProducts = cart[0].products.map(
@@ -142,7 +141,7 @@ const controller = {
                 (product) => product._id.toString() === product_id
             )
             if (updatedProduct) {
-                let cart = await Cart.find({ user_id: id }).populate(
+                let cart = await Cart.find({ user_id: user.id }).populate(
                     'products.product_id'
                 )
                 const updatedCart = cart[0].products.map((product) => {
@@ -159,11 +158,11 @@ const controller = {
                     }
                 })
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: id },
+                    { user_id: user.id },
                     { $set: { products: updatedCart } },
                     { new: true }
                 )
-                cart = await Cart.find({ user_id: id }).populate(
+                cart = await Cart.find({ user_id: user.id }).populate(
                     'products.product_id'
                 )
                 const productsPrice = await (
@@ -178,17 +177,17 @@ const controller = {
                     0
                 )
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: id },
+                    { user_id: user.id },
                     { $set: { products: updatedCart, total_price: total } },
                     { new: true }
                 )
-                req.body.succes = true
+                req.body.success = true
                 req.body.sc = 200
                 req.body.data = cart
                 return defaultResponse(req, res)
             } else {
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: id },
+                    { user_id: user.id },
                     {
                         $push: {
                             products: {
@@ -199,7 +198,7 @@ const controller = {
                     },
                     { new: true }
                 )
-                req.body.succes = true
+                req.body.success = true
                 req.body.sc = 200
                 req.body.data = cart
                 return defaultResponse(req, res)
@@ -210,14 +209,14 @@ const controller = {
     },
     delete_product: async (req, res, next) => {
         try {
-            const { id } = req.params
+            const { user } = req
             const { product_id } = req.body
             let cart = await Cart.findOneAndUpdate(
-                { user_id: id },
+                { user_id: user.id },
                 { $pull: { products: { product_id } } },
                 { new: true }
             )
-            cart = await Cart.find({ user_id: id })
+            cart = await Cart.find({ user_id: user.id })
             const cartProducts = cart[0].products.map(
                 (product) => product.product_id
             )
@@ -233,11 +232,11 @@ const controller = {
                 0
             )
             cart = await Cart.findOneAndUpdate(
-                { user_id: id },
+                { user_id: user.id },
                 { $set: { products: cart[0].products, total_price: total } },
                 { new: true }
             ).populate('products.product_id')
-            req.body.succes = true
+            req.body.success = true
             req.body.sc = 200
             req.body.data = cart
             return defaultResponse(req, res)
@@ -249,11 +248,11 @@ const controller = {
         try {
             const { id } = req.params
             const cart = await Cart.findOneAndUpdate(
-                { user_id: id },
+                { user_id: user.id },
                 { $set: { products: [], total_price: 0 } },
                 { new: true }
             )
-            req.body.succes = true
+            req.body.success = true
             req.body.sc = 200
             req.body.data = cart
             return defaultResponse(req, res)

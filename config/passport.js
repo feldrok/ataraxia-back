@@ -18,7 +18,6 @@ passport.use(
                     user = {
                         id: user._id,
                         mail: user.mail,
-                        id: user._id,
                         is_admin: user.is_admin,
                     }
                     return done(null, user)
