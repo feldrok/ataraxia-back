@@ -11,11 +11,10 @@ router.get('/', function (req, res, next) {
     res.send('Server ready!')
 })
 
-router.use('/users', users)
 router.use('/products', products)
 router.use('/categories', categories)
 router.use('/cart', routerCart)
-router.use("/auth", users)
+router.use("/users", users)
 router.use('/checkout', orders)
 router.use('/payment', mercadopago)
 
