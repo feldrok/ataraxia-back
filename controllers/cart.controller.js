@@ -1,54 +1,110 @@
-import defaultResponse from '../config/defaultResponse.js'
 import { Cart } from '../models/Cart.model.js'
-import { User } from '../models/User.model.js'
+import { Product } from '../models/Product.model.js'
+import defaultResponse from '../config/defaultResponse.js'
 
 const controller = {
-    createCart: async (req, res, next) => {
+    create: async (req, res, next) => {
         try {
-            let addProducts = await Cart.create(req.body)
-            req.body.success = true
+            const cart = await Cart.create(req.body)
+            req.body.succes = true
             req.body.sc = 201
-            req.body.data = 'carro creado'
+            req.body.data = cart
             return defaultResponse(req, res)
-        } catch (err) {
-            console.log('noup')
-            next(err)
-        }
-    },
-    addOneProduct: async (req, res, next) => {
-        const user = req.body
-        try {
-            let addOneProduct = await Cart.findOneAndUpdate(user, {
-                $set: products,
-            })
-            console.log(addOneProduct)
-            return res.status(200).json({
-                succes: true,
-                message: addOneProduct,
-            })
         } catch (error) {
             next(error)
         }
     },
-    deleteOneProduct: async (req, res, next) => {
+    get_user_cart: async (req, res, next) => {
         try {
             const { id } = req.params
-            await Cart.findByIdAndDelete(id)
-            res.status(200).json({
-                success: true,
-                message: 'Producto eliminado correctamente',
-            })
+            const cart = await Cart.find({ user_id: id })
+            req.body.succes = true
+            req.body.sc = 200
+            req.body.data = cart
+            return defaultResponse(req, res)
         } catch (error) {
             next(error)
         }
     },
-    emptyCart: async (req, res, next) => {
+    update_cart: async (req, res, next) => {
+        const { id } = req.params
         try {
-            await Cart.deleteMany(req.body.products)
-            res.status(200).json({
-                success: true,
-                message: 'El carrito está vacío',
-            })
+            const productsIds = req.body.products
+                .filter((product) => product.product_id)
+                .map((product) => product.product_id)
+            const productsPrice = await (
+                await Product.find({ _id: { $in: productsIds } })
+            ).map((product) => product.price)
+            const productsQuantity = req.body.products
+                .filter((product) => product.quantity)
+                .map((product) => product.quantity)
+            const total = productsPrice.reduce(
+                (total, price, index) =>
+                    total + price * productsQuantity[index],
+                0
+            )
+            const updateCart = await Cart.findOneAndUpdate(
+                { user_id: id },
+                { $set: { products: req.body.products, total_price: total } },
+                { new: true }
+            ).populate('products.product_id')
+            req.body.succes = true
+            req.body.sc = 200
+            req.body.data = updateCart
+            return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
+    delete_product: async (req, res, next) => {
+        try {
+            const { id } = req.params
+            const { product_id } = req.body
+            let cart = await Cart.findOneAndUpdate(
+                { user_id: id },
+                { $pull: { products: { product_id } } },
+                { new: true }
+            )
+            cart = await Cart.find({ user_id: id })
+            const cartProducts = cart[0].products.map(
+                (product) => product.product_id
+            )
+            const productsPrice = await (
+                await Product.find({ _id: { $in: cartProducts } })
+            ).map((product) => product.price)
+            const productsQuantity = cart[0].products.map(
+                (product) => product.quantity
+            )
+            const total = productsPrice.reduce(
+                (total, price, index) =>
+                    total + price * productsQuantity[index],
+                0
+            )
+            cart = await Cart.findOneAndUpdate(
+                { user_id: id },
+                { $set: { products: cart[0].products, total_price: total } },
+                { new: true }
+            ).populate('products.product_id')
+            req.body.succes = true
+            req.body.sc = 200
+            req.body.data = cart
+            return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
+    empty_cart: async (req, res, next) => {
+        try {
+            const { id } = req.params
+            const cart = await Cart.findOneAndUpdate(
+                { user_id: id },
+                { $set: { products: [], total_price: 0 } },
+                { new: true }
+            )
+            req.body.succes = true
+            req.body.sc = 200
+            req.body.data = cart
+            return defaultResponse(req, res)
         } catch (error) {
             next(error)
         }
