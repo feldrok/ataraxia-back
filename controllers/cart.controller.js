@@ -5,7 +5,22 @@ import defaultResponse from '../config/defaultResponse.js'
 const controller = {
     create: async (req, res, next) => {
         try {
-            const cart = await Cart.create(req.body)
+            const { user_id, products } = req.body
+            const productsIds = req.body.products
+                .filter((product) => product.product_id)
+                .map((product) => product.product_id)
+            const productsPrice = await (
+                await Product.find({ _id: { $in: productsIds } })
+            ).map((product) => product.price)
+            const productsQuantity = req.body.products
+                .filter((product) => product.quantity)
+                .map((product) => product.quantity)
+            const total = productsPrice.reduce(
+                (total, price, index) =>
+                    total + price * productsQuantity[index],
+                0
+            )
+            const cart = await Cart.create({ user_id: user_id, products: products, total_price: total})
             req.body.succes = true
             req.body.sc = 201
             req.body.data = cart
