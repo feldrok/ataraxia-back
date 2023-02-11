@@ -1,11 +1,15 @@
 import { Cart } from '../models/Cart.model.js'
 import { Product } from '../models/Product.model.js'
 import defaultResponse from '../config/defaultResponse.js'
+import mongoose from 'mongoose'
 
 const controller = {
     create: async (req, res, next) => {
         try {
-            const { user } = req
+            const { id } = req.params
+            if (!mongoose.isValidObjectId(id)) {
+                id = mongoose.Types.ObjectId(id)
+            }
             const { product_id, quantity } = req.body
             const productsPrice = await (
                 await Product.find({ _id: { $in: product_id } })
@@ -15,12 +19,12 @@ const controller = {
                 0
             )
             const cart = await Cart.create({
-                user_id: user.id,
+                user_id: id,
                 products: [
                     {
                         product_id: product_id,
                         quantity: quantity,
-                    }
+                    },
                 ],
                 total_price: total,
             })
@@ -34,8 +38,11 @@ const controller = {
     },
     get_user_cart: async (req, res, next) => {
         try {
-            const { user } = req
-            const cart = await Cart.find({ user_id: user.id }).populate(
+            const { id } = req.params
+            if (!mongoose.isValidObjectId(id)) {
+                id = mongoose.Types.ObjectId(id)
+            }
+            const cart = await Cart.find({ user_id: id }).populate(
                 'products.product_id'
             )
             req.body.success = true
@@ -48,9 +55,12 @@ const controller = {
     },
     add_product_to_cart: async (req, res, next) => {
         try {
-            const { user } = req
+            const { id } = req.params
+            if (!mongoose.isValidObjectId(id)) {
+                id = mongoose.Types.ObjectId(id)
+            }
             const { product_id, quantity } = req.body
-            let cart = await Cart.find({ user_id: user.id }).populate(
+            let cart = await Cart.find({ user_id: id }).populate(
                 'products.product_id'
             )
             const cartProducts = cart[0].products.map(
@@ -60,7 +70,7 @@ const controller = {
                 (product) => product._id.toString() === product_id
             )
             if (updatedProduct) {
-                let cart = await Cart.find({ user_id: user.id }).populate(
+                let cart = await Cart.find({ user_id: id }).populate(
                     'products.product_id'
                 )
                 const updatedCart = cart[0].products.map((product) => {
@@ -77,11 +87,11 @@ const controller = {
                     }
                 })
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: user.id },
+                    { user_id: id },
                     { $set: { products: updatedCart } },
                     { new: true }
                 )
-                cart = await Cart.find({ user_id: user.id }).populate(
+                cart = await Cart.find({ user_id: id }).populate(
                     'products.product_id'
                 )
                 const productsPrice = await (
@@ -96,7 +106,7 @@ const controller = {
                     0
                 )
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: user.id },
+                    { user_id: id },
                     { $set: { products: updatedCart, total_price: total } },
                     { new: true }
                 )
@@ -106,7 +116,7 @@ const controller = {
                 return defaultResponse(req, res)
             } else {
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: user.id },
+                    { user_id: id },
                     {
                         $push: {
                             products: {
@@ -128,9 +138,12 @@ const controller = {
     },
     update_cart: async (req, res, next) => {
         try {
-            const { user } = req
+            const { id } = req.params
+            if (!mongoose.isValidObjectId(id)) {
+                id = mongoose.Types.ObjectId(id)
+            }
             const { product_id, quantity } = req.body
-            let cart = await Cart.find({ user_id: user.id }).populate(
+            let cart = await Cart.find({ user_id: id }).populate(
                 'products.product_id'
             )
             const cartProducts = cart[0].products.map(
@@ -141,7 +154,7 @@ const controller = {
                 (product) => product._id.toString() === product_id
             )
             if (updatedProduct) {
-                let cart = await Cart.find({ user_id: user.id }).populate(
+                let cart = await Cart.find({ user_id: id }).populate(
                     'products.product_id'
                 )
                 const updatedCart = cart[0].products.map((product) => {
@@ -158,11 +171,11 @@ const controller = {
                     }
                 })
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: user.id },
+                    { user_id: id },
                     { $set: { products: updatedCart } },
                     { new: true }
                 )
-                cart = await Cart.find({ user_id: user.id }).populate(
+                cart = await Cart.find({ user_id: id }).populate(
                     'products.product_id'
                 )
                 const productsPrice = await (
@@ -177,7 +190,7 @@ const controller = {
                     0
                 )
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: user.id },
+                    { user_id: id },
                     { $set: { products: updatedCart, total_price: total } },
                     { new: true }
                 )
@@ -187,7 +200,7 @@ const controller = {
                 return defaultResponse(req, res)
             } else {
                 cart = await Cart.findOneAndUpdate(
-                    { user_id: user.id },
+                    { user_id: id },
                     {
                         $push: {
                             products: {
@@ -209,14 +222,17 @@ const controller = {
     },
     delete_product: async (req, res, next) => {
         try {
-            const { user } = req
+            const { id } = req.params
+            if (!mongoose.isValidObjectId(id)) {
+                id = mongoose.Types.ObjectId(id)
+            }
             const { product_id } = req.body
             let cart = await Cart.findOneAndUpdate(
-                { user_id: user.id },
+                { user_id: id },
                 { $pull: { products: { product_id } } },
                 { new: true }
             )
-            cart = await Cart.find({ user_id: user.id })
+            cart = await Cart.find({ user_id: id })
             const cartProducts = cart[0].products.map(
                 (product) => product.product_id
             )
@@ -232,7 +248,7 @@ const controller = {
                 0
             )
             cart = await Cart.findOneAndUpdate(
-                { user_id: user.id },
+                { user_id: id },
                 { $set: { products: cart[0].products, total_price: total } },
                 { new: true }
             ).populate('products.product_id')
@@ -247,8 +263,11 @@ const controller = {
     empty_cart: async (req, res, next) => {
         try {
             const { id } = req.params
+            if (!mongoose.isValidObjectId(id)) {
+                id = mongoose.Types.ObjectId(id)
+            }
             const cart = await Cart.findOneAndUpdate(
-                { user_id: user.id },
+                { user_id: id },
                 { $set: { products: [], total_price: 0 } },
                 { new: true }
             )
