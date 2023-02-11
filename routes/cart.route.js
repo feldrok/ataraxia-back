@@ -9,7 +9,7 @@ const router = express.Router()
 const { create, add_product_to_cart, get_user_cart, update_cart, delete_product, empty_cart } =
     controller
 
-router.post('/', validator(createSchema), create)
+router.post('/:id', validator(createSchema), create)
 router.get('/:id', get_user_cart)
 router.put('/add/:id', validator(updateSchema), add_product_to_cart)
 router.put('/update/:id', validator(updateSchema), update_cart)

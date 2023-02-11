@@ -3,9 +3,10 @@ import defaultResponse from '../config/defaultResponse.js'
 
 const controller = {
     create: async (req, res, next) => {
+        const { user } = req
         const { id } = req.params
         const order = {
-            user_id: '63e1a2c821d9d7561f883265',
+            user_id: user.id,
             cart_id: id,
             statusOrder: 'Approved',
         }
@@ -20,9 +21,9 @@ const controller = {
         }
     },
     get_orders_user: async (req, res, next) => {
-        const user_id = '63e1a2c821d9d7561f883265'
+        const { user } = req
         try {
-            const orders = await Order.find({ user_id: user_id })
+            const orders = await Order.find({ user_id: user.id })
             res.status(200).json({
                 success: true,
                 response: orders,
