@@ -3,7 +3,7 @@ import Joi from 'joi-oid'
 export const createSchema = Joi.object({
     product_id: Joi.objectId().required(),
     quantity: Joi.number().required(),
-    user_id: Joi.objectId(),
+    user_id: Joi.string(),
     total_price: Joi.number(),
 })
 
