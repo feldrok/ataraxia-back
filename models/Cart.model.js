@@ -1,14 +1,14 @@
 import mongoose from 'mongoose'
 
 const cartSchema = new mongoose.Schema({
-    userId: {
+    user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: false,
     },
     products: [
         {
-            productId: {
+            product_id: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'products',
                 required: true,
@@ -19,7 +19,7 @@ const cartSchema = new mongoose.Schema({
             },
         },
     ],
-    totalPrice: {
+    total_price: {
         type: Number,
         required: false,
     },
