@@ -43,6 +43,17 @@ const controller = {
             next(error)
         }
     },
+    get_orders: async (req, res, next) => {
+        try {
+            const orders = await Order.find()
+            req.body.success = true
+            req.body.sc = 200
+            req.body.data = orders
+            return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 export default controller
