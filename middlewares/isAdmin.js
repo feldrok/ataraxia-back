@@ -13,6 +13,7 @@ const isAdmin = async (req, res, next) => {
         }
     } catch (error) {
         next(error)
+        console.log(req)
     }
 }
 export default isAdmin

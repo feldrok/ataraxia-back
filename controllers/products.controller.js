@@ -47,7 +47,7 @@ const controller = {
         const productInfo = req.body
         try {
             let result = await Product.findOneAndUpdate(
-                { name: req.name },
+                { id: req._id },
                 { $set: productInfo },
                 { new: true }
             )
