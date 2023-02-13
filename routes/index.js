@@ -1,3 +1,4 @@
+import addresses from './addresses.route.js'
 import cart from './cart.route.js'
 import categories from './categories.route.js'
 import express from 'express'
@@ -16,7 +17,16 @@ router.use('/products', products)
 router.use('/categories', categories)
 router.use('/cart', cart)
 router.use('/users', users)
-router.use('/checkout', passport.authenticate("jwt", { session: false }) ,orders)
+router.use(
+    '/checkout',
+    passport.authenticate('jwt', { session: false }),
+    orders
+)
 router.use('/payment', mercadopago)
+router.use(
+    '/address',
+    passport.authenticate('jwt', { session: false }),
+    addresses
+)
 
 export default router
