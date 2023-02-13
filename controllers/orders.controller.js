@@ -48,7 +48,7 @@ const controller = {
         try {
             const order = await Order.findOneAndUpdate(
                 { _id: id },
-                { $set: req.statusOrder },
+                { $set: req.body },
                 { new: true }
             )
             if (order) {
