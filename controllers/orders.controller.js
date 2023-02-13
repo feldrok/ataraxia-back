@@ -43,6 +43,30 @@ const controller = {
             next(error)
         }
     },
+    update_order_user: async (req, res, next) => {
+        const { id } = req.params
+        try {
+            const order = await Order.findOneAndUpdate(
+                { _id: id },
+                { $set: req.statusOrder },
+                { new: true }
+            )
+            if (order) {
+                console.log(req.order)
+                req.body.success = true
+                req.body.sc = 200
+                req.body.data = 'Order updated successfully'
+                return defaultResponse(req, res)
+            } else {
+                req.body.success = false
+                req.body.sc = 404
+                req.body.data = 'Order not found'
+                return defaultResponse(req, res)
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 export default controller

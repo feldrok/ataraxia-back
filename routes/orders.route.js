@@ -2,11 +2,20 @@ import controller from '../controllers/orders.controller.js'
 import express from 'express'
 import { schema } from '../schemas/order.shchema.js'
 import validator from '../middlewares/validator.js'
+import isAdmin from '../middlewares/isAdmin.js'
+import passport from 'passport'
 const router = express.Router()
 
-const { create, get_orders_user } = controller
+const { create, get_orders_user, update_order_user } = controller
 
-router.get('/', get_orders_user)
+router.get('/all', get_orders_user)
 router.post('/:id', validator(schema), create)
+router.put(
+    '/order/:id',
+    passport.authenticate('jwt', { session: false }),
+    validator(schema),
+    isAdmin,
+    update_order_user
+)
 
 export default router
