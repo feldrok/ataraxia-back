@@ -13,6 +13,10 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-})
+    total_price: {
+        type: Number,
+        required: true,
+    }
+}, { timestamps: true })
 
 export const Order = mongoose.model('order', orderSchema)

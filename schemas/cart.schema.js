@@ -1,23 +1,15 @@
 import Joi from 'joi-oid'
 
 export const createSchema = Joi.object({
-    products: Joi.array().items(
-        Joi.object({
-            product_id: Joi.objectId().required(),
-            quantity: Joi.number().required(),
-        })
-    ),
-    user_id: Joi.objectId(),
+    product_id: Joi.objectId().required(),
+    quantity: Joi.number().required(),
+    user_id: Joi.string(),
     total_price: Joi.number(),
 })
 
 export const updateSchema = Joi.object({
-    products: Joi.array().items(
-        Joi.object({
-            product_id: Joi.objectId().required(),
-            quantity: Joi.number().required(),
-        })
-    ),
+    product_id: Joi.objectId().required(),
+    quantity: Joi.number().required(),
 })
 
 export const deleteProductSchema = Joi.object({
