@@ -2,8 +2,9 @@ import { Address } from '../models/Address.model.js'
 import defaultResponse from '../config/defaultResponse.js'
 
 async function addressExists(req, res, next) {
+    const { user } = req
     const { street } = req.body
-    const address = await Address.findOne({ street: street })
+    const address = await Address.findOne({ user_id: user.id, street: street })
     if (!address) {
         return next()
     }

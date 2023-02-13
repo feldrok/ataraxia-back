@@ -6,7 +6,7 @@ const controller = {
         try {
             const { user } = req
             const address = await Address.create({ 
-                user: user.id,
+                user_id: user.id,
                 street: req.body.street,
                 city: req.body.city,
                 state: req.body.state,
