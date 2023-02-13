@@ -129,6 +129,20 @@ const controller = {
             next(error)
         }
     },
+
+    get_profile_data: async (req, res, next) => {
+        const { user } = req
+        try {
+            let consultas = { _id: user.id }
+            let user_data = await User.findOne(consultas).select('-password -verify_code -is_verified -__v')
+            req.body.success = true
+            req.body.sc = 200
+            req.body.data = user_data
+            return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 export default controller

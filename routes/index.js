@@ -16,7 +16,7 @@ router.use('/products', products)
 router.use('/categories', categories)
 router.use('/cart', cart)
 router.use('/users', users)
-router.use('/checkout', orders)
+router.use('/checkout', passport.authenticate("jwt", { session: false }) ,orders)
 router.use('/payment', mercadopago)
 
 export default router
