@@ -3,6 +3,7 @@ import defaultResponse from '../config/defaultResponse.js'
 const isAdmin = async (req, res, next) => {
     try {
         const { user } = req
+        console.log(user)
         if (user.is_admin === true) {
             return next()
         } else {

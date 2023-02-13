@@ -44,30 +44,26 @@ const controller = {
         }
     },
     update_product: async (req, res, next) => {
-        const productInfo = req.body
         try {
-            let result = await Product.findOneAndUpdate(
-                { name: req.name },
-                { $set: productInfo },
+            const { id } = req.params
+            let product = await Product.findOneAndUpdate(
+                { _id: id },
+                { $set: req.body },
                 { new: true }
             )
-            if (result) {
-                return res.status(200).json({
-                    success: true,
-                    message: 'Stock actualizado',
-                })
+            if (product) {
+                req.body.success = true
+                req.body.sc = 200
+                req.body.data = product
+                return defaultResponse(req, res)
             } else {
-                return res.status(404).json({
-                    success: false,
-                    message: 'No se encontro el producto',
-                })
+                req.body.success = false
+                req.body.sc = 404
+                req.body.data = 'Product not found'
+                return defaultResponse(req, res)
             }
         } catch (error) {
             next(error)
-            return res.status(400).json({
-                success: false,
-                message: error,
-            })
         }
     },
 }
