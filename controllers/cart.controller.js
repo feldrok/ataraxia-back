@@ -94,9 +94,9 @@ const controller = {
                 cart = await Cart.find({ user_id: id }).populate(
                     'products.product_id'
                 )
-                const productsPrice = await (
-                    await Product.find({ _id: { $in: cartProducts } })
-                ).map((product) => product.price)
+                const productsPrice = cart[0].products.map(
+                    (product) => product.product_id.price
+                )
                 const productsQuantity = cart[0].products.map(
                     (product) => product.quantity
                 )
