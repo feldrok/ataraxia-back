@@ -24,7 +24,7 @@ const controller = {
     get_user_addresses: async (req, res, next) => {
         try {
             const { user } = req
-            const addresses = await Address.find({ user: user._id })
+            const addresses = await Address.find({ user_id: user.id })
             if (addresses.length === 0) {
                 req.body.success = false
                 req.body.sc = 404
