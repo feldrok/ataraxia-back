@@ -16,7 +16,7 @@ const controller = {
             password: bcryptjs.hashSync(req.body.password, 10),
             is_online: false,
             is_admin: false,
-            is_verified: true,
+            is_verified: false,
             verify_code: crypto.randomBytes(10).toString('hex'),
         }
         try {

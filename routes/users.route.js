@@ -14,7 +14,7 @@ const { signup, verifyCode, signin, signintoken, signout } = controller
 
 router.post('/signup', accountExistsSignUp, validator(createSchema), signup)
 router.get('/verify_code', verifyCode)
-router.post("signin", accountExistsSignIn, accountHasBeenVerified, signin)
+router.post("/signin", accountExistsSignIn, accountHasBeenVerified, signin)
 router.post("/token", passport.authenticate("jwt", {session: false}), mustSignIn, signintoken)
 router.put("/signout", passport.authenticate("jwt", { session: false }), signout)
 
