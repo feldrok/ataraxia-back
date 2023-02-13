@@ -3,8 +3,8 @@ import accountVerificationMail from '../middlewares/accountVerificationMail.js'
 import bcryptjs from 'bcryptjs'
 import crypto from 'crypto'
 import defaultResponse from '../config/defaultResponse.js'
-import jwt from "jsonwebtoken"
-import sgMail from "@sendgrid/mail"
+import jwt from 'jsonwebtoken'
+import sgMail from '@sendgrid/mail'
 
 const controller = {
     signup: async (req, res, next) => {
@@ -22,17 +22,17 @@ const controller = {
         try {
             const message = {
                 to: user.mail,
-                from: "arielgonzalezayala@gmail.com",
-                subject: "Confirmá tu dirección de mail",
-                text: "Haz click en el link de confirmación",
+                from: 'arielgonzalezayala@gmail.com',
+                subject: 'Confirmá tu dirección de mail',
+                text: 'Haz click en el link de confirmación',
                 html: `<h2>Te damos al bienvenida a Ataraxia! Por favor, clickeá el siguiente link para confirmar tu dirección de mail y unirte a nuestra página: <a href="http://localhost:3000/verify/${user._id}/${user.verify_code}">&lt;&lt;CLICK AQUI&gt;&gt;</a></h2>`,
-              }
+            }
             const createdUser = await User.create(user)
-/*             await accountVerificationMail(createdUser, res) */
+            /*             await accountVerificationMail(createdUser, res) */
             req.body.succes = true
             req.body.sc = 201
             req.body.data = 'Usuario creado con éxito!'
-/*             await sgMail.send(message) */
+            /*             await sgMail.send(message) */
             return defaultResponse(req, res)
         } catch (error) {
             next(error)
@@ -54,12 +54,12 @@ const controller = {
                 )
                 req.body.success = true
                 req.body.sc = 200
-                req.body.data = "Usuario verificado!"
+                req.body.data = 'Usuario verificado!'
                 return defaultResponse(req, res)
             } else {
                 req.body.success = false
                 req.body.sc = 400
-                req.body.data = "Hubo un error al verificar tu usuario."
+                req.body.data = 'Hubo un error al verificar tu usuario.'
                 return defaultResponse(req, res)
             }
         } catch (error) {
@@ -84,7 +84,7 @@ const controller = {
 
                 user = {
                     mail: user.mail,
-                    id: user.id
+                    id: user.id,
                 }
                 req.body.success = true
                 req.body.sc = 200
@@ -93,7 +93,7 @@ const controller = {
             }
             req.body.success = false
             req.body.sc = 400
-            req.body.data = "Credenciales Inválidas"
+            req.body.data = 'Credenciales Inválidas'
             return defaultResponse(req, res)
         } catch (error) {
             next(error)
@@ -122,8 +122,21 @@ const controller = {
             )
             req.body.success = true
             req.body.sc = 200
-            req.body.data = "Nos vemos pronto!"
+            req.body.data = 'Nos vemos pronto!'
             return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
+    delete: async (req, res) => {
+        try {
+            const { id } = req.params
+            await User.findByIdAndDelete(id)
+            res.status(200).json({
+                success: true,
+                sc: 200,
+                data: 'Usuario eliminado con éxito!',
+            })
         } catch (error) {
             next(error)
         }
