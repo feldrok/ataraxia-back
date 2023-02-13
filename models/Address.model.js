@@ -4,7 +4,7 @@ const addressSchema = new mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
-        required: false,
+        required: true,
     },
     street: {
         type: String,
