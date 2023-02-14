@@ -5,6 +5,7 @@ import mercadopago from './mercadopago.route.js'
 import orders from './orders.route.js'
 import passport from 'passport'
 import products from './products.route.js'
+import rating from './rating.route.js'
 import users from './users.route.js'
 const router = express.Router()
 
@@ -16,6 +17,7 @@ router.use('/products', products)
 router.use('/categories', categories)
 router.use('/cart', cart)
 router.use('/users', users)
+router.use('/rating', rating)
 router.use('/checkout', passport.authenticate("jwt", { session: false }) ,orders)
 router.use('/payment', mercadopago)
 
