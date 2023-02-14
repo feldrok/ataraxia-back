@@ -5,7 +5,9 @@ async function addressExists(req, res, next) {
     const { user } = req
     const { street } = req.body
     const address = await Address.findOne({ user_id: user.id, street: street })
-    if (!address) {
+    const addresses = await Address.find({ user_id: user.id })
+    console.log(addresses)
+    if (!address && addresses.length < 4) {
         return next()
     }
     req.body.success = false
