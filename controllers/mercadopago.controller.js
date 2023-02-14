@@ -37,7 +37,7 @@ export const createOrder = async (req, res, next) => {
             },
         },
         back_urls: {
-            success: "https://google.com",
+            success: "http://localhost:3000",
             failure: "http://localhost:3000",
             pending: "http://localhost:3000"
         },
