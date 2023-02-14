@@ -28,11 +28,11 @@ const controller = {
                 html: `<h2>Te damos al bienvenida a Ataraxia! Por favor, clickeá el siguiente link para confirmar tu dirección de mail y unirte a nuestra página: <a href="http://localhost:3000/verify/${user._id}/${user.verify_code}">&lt;&lt;CLICK AQUI&gt;&gt;</a></h2>`,
             }
             const createdUser = await User.create(user)
-            /*             await accountVerificationMail(createdUser, res) */
             req.body.success = true
             req.body.sc = 201
             req.body.data = 'Usuario creado con éxito!'
-            /*             await sgMail.send(message) */
+            /* accountVerificationMail(message) */
+            /* sgMail.send(message) */
             return defaultResponse(req, res)
         } catch (error) {
             next(error)

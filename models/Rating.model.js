@@ -5,20 +5,19 @@ const ratingSchema = new mongoose.Schema(
         product_id: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: "product",
+            ref: "products",
         },
         user_id: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: "user",
+            ref: "users",
         },
         rating: {
             type: Number,
             required: true,
-            ref: "rating",
         }
     },
     { timestamps: true }
 )
 
-export const Rating = mongoose.model("rating", ratingSchema)
+export const Rating = mongoose.model("ratings", ratingSchema)
