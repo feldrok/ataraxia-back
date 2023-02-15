@@ -1,9 +1,9 @@
 import controller from '../controllers/orders.controller.js'
 import express from 'express'
 import isAdmin from '../middlewares/isAdmin.js'
-import { schema } from '../schemas/order.shchema.js'
-import validator from '../middlewares/validator.js'
 import passport from 'passport'
+import { schema } from '../schemas/order.schema.js'
+import validator from '../middlewares/validator.js'
 const router = express.Router()
 
 const { create, get_orders_user, update_order_user, get_orders } = controller

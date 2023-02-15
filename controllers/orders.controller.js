@@ -46,14 +46,16 @@ const controller = {
     },
     update_order_user: async (req, res, next) => {
         const { id } = req.params
+        const { status } = req.body
+        console.log(status)
         try {
             const order = await Order.findOneAndUpdate(
                 { _id: id },
-                { $set: req.body },
+                { $set: { statusOrder: status } },
                 { new: true }
             )
+            console.log(order)
             if (order) {
-                console.log(req.order)
                 req.body.success = true
                 req.body.sc = 200
                 req.body.data = 'Order updated successfully'
