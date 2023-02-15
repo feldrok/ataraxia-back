@@ -14,7 +14,7 @@ async function accountExistsSignIn(req, res, next) {
     }
     req.body.success = false
     req.body.sc = 400
-    req.body.data = "user does not exist!"
+    req.body.data = "Email incorrecto"
     return defaultResponse(req, res)
 }
 

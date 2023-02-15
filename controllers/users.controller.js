@@ -8,6 +8,13 @@ import sgMail from '@sendgrid/mail'
 
 const controller = {
     signup: async (req, res, next) => {
+        const { verify_password, password } = req.body
+        if (verify_password !== password) {
+            req.body.success = false
+            req.body.sc = 400
+            req.body.data = 'Las contraseñas no coinciden'
+            return defaultResponse(req, res)
+        }
         const user = {
             name: req.body.name,
             lastName: req.body.lastName,
@@ -92,7 +99,7 @@ const controller = {
             }
             req.body.success = false
             req.body.sc = 400
-            req.body.data = 'Credenciales Inválidas'
+            req.body.data = 'Contraseña incorrecta'
             return defaultResponse(req, res)
         } catch (error) {
             next(error)
