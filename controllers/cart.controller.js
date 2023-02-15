@@ -105,6 +105,9 @@ const controller = {
                         total + price * productsQuantity[index],
                     0
                 )
+                if (total === 0) {
+                    total = productsPrice[0].price
+                }
                 cart = await Cart.findOneAndUpdate(
                     { user_id: id },
                     { $set: { products: updatedCart, total_price: total } },
@@ -115,6 +118,9 @@ const controller = {
                 req.body.data = cart
                 return defaultResponse(req, res)
             } else {
+                let product = await Product.findOne({ _id: product_id })
+                let cart = await Cart.findOne({ user_id: id })
+                let total = cart.total_price + product.price * quantity
                 cart = await Cart.findOneAndUpdate(
                     { user_id: id },
                     {
@@ -124,6 +130,7 @@ const controller = {
                                 quantity: quantity,
                             },
                         },
+                        $set: { total_price: total },
                     },
                     { new: true }
                 )
