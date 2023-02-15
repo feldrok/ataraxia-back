@@ -150,6 +150,19 @@ const controller = {
             next(error)
         }
     },
+    delete: async (req, res) => {
+        try {
+            const { id } = req.params
+            await User.findByIdAndDelete(id)
+            res.status(200).json({
+                success: true,
+                sc: 200,
+                data: 'Usuario eliminado con éxito!',
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
 }
 
 export default controller
