@@ -1,12 +1,20 @@
 import sgMail from "@sendgrid/mail";
 
+const { SENDGRID_SENDER } = process.env
+
 function accountVerificationMail(user, res) {
     const message = {
         to: user.mail,
         from: "arielgonzalezayala@gmail.com",
         subject: "Confirmá tu dirección de mail",
         text: "Haz click en el link de confirmación",
-        html: `<h2>Te damos al bienvenida a Ataraxia! Por favor, clickeá el siguiente link para confirmar tu dirección de mail y unirte a nuestra página: <a href="http://localhost:3000/verify/${user._id}/${user.verify_code}">&gt;&gt;CLICK AQUI&lt;&lt;</a></h2>`
+        html: ` <br>
+                <div align=center>
+                    <img src="https://i.ibb.co/x248tXm/ATARAXIA2.png" alt="ATARAXIA2" align=center border="0">
+                </div>
+                <br>
+                <h1 style="color: #d90541" align=center>Te damos al bienvenida a Ataraxia!</h1>
+                <h2 align=center>Para poder realizar compras en nuestra tienda, necesitamos que verifiques tu mail. Por favor, <a href="http://ataraxia-front.onrender.com/verify/${user._id}/${user.verify_code}">haz click en este link.</a></h2>`
         }
     try {
         sgMail.send(message);
