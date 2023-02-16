@@ -47,7 +47,6 @@ const controller = {
     update_order_user: async (req, res, next) => {
         const { id } = req.params
         const { status } = req.body
-        console.log(status)
         try {
             const order = await Order.findOneAndUpdate(
                 { _id: id },
@@ -73,7 +72,6 @@ const controller = {
     get_orders: async (req, res, next) => {
         try {
             const orders = await Order.find().populate('user_id')
-            console.log(orders)
             req.body.success = true
             req.body.sc = 200
             req.body.data = orders

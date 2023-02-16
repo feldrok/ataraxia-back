@@ -8,7 +8,7 @@ const controller = {
             query.category_id = req.query.category_id
         }
         try {
-            const products = await Product.find(query)
+            const products = await Product.find(query).populate('category_id')
             if (products.length > 0) {
                 req.body.succes = true
                 req.body.sc = 200
@@ -27,7 +27,7 @@ const controller = {
     get_product: async (req, res, next) => {
         try {
             const { id } = req.params
-            const product = await Product.findById(id)
+            const product = await Product.findById(id).populate('category_id')
             if (product) {
                 req.body.succes = true
                 req.body.sc = 200
