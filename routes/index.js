@@ -19,7 +19,7 @@ router.use('/categories', categories)
 router.use('/cart', cart)
 router.use('/users', users)
 router.use('/rating', rating)
-router.use('/checkout', passport.authenticate("jwt", { session: false }) ,orders)
+router.use('/checkout', orders)
 router.use('/payment', mercadopago)
 router.use(
     '/address',
