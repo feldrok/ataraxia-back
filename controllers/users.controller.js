@@ -11,6 +11,13 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const controller = {
     signup: async (req, res, next) => {
+        const { verify_password, password } = req.body
+        if (verify_password !== password) {
+            req.body.success = false
+            req.body.sc = 400
+            req.body.data = 'Las contraseñas no coinciden'
+            return defaultResponse(req, res)
+        }
         const user = {
             name: req.body.name,
             lastName: req.body.lastName,
@@ -87,7 +94,7 @@ const controller = {
             }
             req.body.success = false
             req.body.sc = 400
-            req.body.data = 'Credenciales Inválidas'
+            req.body.data = 'Contraseña incorrecta'
             return defaultResponse(req, res)
         } catch (error) {
             next(error)
@@ -134,6 +141,19 @@ const controller = {
             req.body.sc = 200
             req.body.data = user_data
             return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
+    delete: async (req, res) => {
+        try {
+            const { id } = req.params
+            await User.findByIdAndDelete(id)
+            res.status(200).json({
+                success: true,
+                sc: 200,
+                data: 'Usuario eliminado con éxito!',
+            })
         } catch (error) {
             next(error)
         }

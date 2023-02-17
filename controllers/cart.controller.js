@@ -94,9 +94,9 @@ const controller = {
                 cart = await Cart.find({ user_id: id }).populate(
                     'products.product_id'
                 )
-                const productsPrice = await (
-                    await Product.find({ _id: { $in: cartProducts } })
-                ).map((product) => product.price)
+                const productsPrice = cart[0].products.map(
+                    (product) => product.product_id.price
+                )
                 const productsQuantity = cart[0].products.map(
                     (product) => product.quantity
                 )
@@ -105,6 +105,9 @@ const controller = {
                         total + price * productsQuantity[index],
                     0
                 )
+                if (total === 0) {
+                    total = productsPrice[0].price
+                }
                 cart = await Cart.findOneAndUpdate(
                     { user_id: id },
                     { $set: { products: updatedCart, total_price: total } },
@@ -115,6 +118,9 @@ const controller = {
                 req.body.data = cart
                 return defaultResponse(req, res)
             } else {
+                let product = await Product.findOne({ _id: product_id })
+                let cart = await Cart.findOne({ user_id: id })
+                let total = cart.total_price + product.price * quantity
                 cart = await Cart.findOneAndUpdate(
                     { user_id: id },
                     {
@@ -124,6 +130,7 @@ const controller = {
                                 quantity: quantity,
                             },
                         },
+                        $set: { total_price: total },
                     },
                     { new: true }
                 )
@@ -178,9 +185,9 @@ const controller = {
                 cart = await Cart.find({ user_id: id }).populate(
                     'products.product_id'
                 )
-                const productsPrice = await (
-                    await Product.find({ _id: { $in: cartProducts } })
-                ).map((product) => product.price)
+                const productsPrice = cart[0].products.map(
+                    (product) => product.product_id.price
+                )
                 const productsQuantity = cart[0].products.map(
                     (product) => product.quantity
                 )
