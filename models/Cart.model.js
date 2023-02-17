@@ -19,6 +19,11 @@ const cartSchema = new mongoose.Schema({
             },
         },
     ],
+    coupon_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'coupons',
+        required: false,
+    },
     total_price: {
         type: Number,
         required: false,
