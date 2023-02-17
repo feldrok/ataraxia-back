@@ -8,9 +8,9 @@ const router = express.Router()
 
 const { create, get_orders_user, update_order_user, get_orders } = controller
 
+router.post('/', validator(schema), create)
 router.get('/all', isAdmin, get_orders)
 router.get('/', get_orders_user)
-router.post('/:id', validator(schema), create)
 router.put('/order/:id', isAdmin, update_order_user)
 
 export default router
