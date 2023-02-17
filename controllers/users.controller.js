@@ -6,6 +6,9 @@ import defaultResponse from '../config/defaultResponse.js'
 import jwt from 'jsonwebtoken'
 import sgMail from '@sendgrid/mail'
 
+const { SENDGRID_API_KEY } = process.env
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
 const controller = {
     signup: async (req, res, next) => {
         const { verify_password, password } = req.body
@@ -23,23 +26,15 @@ const controller = {
             password: bcryptjs.hashSync(req.body.password, 10),
             is_online: false,
             is_admin: false,
-            is_verified: true,
+            is_verified: false,
             verify_code: crypto.randomBytes(10).toString('hex'),
         }
         try {
-            const message = {
-                to: user.mail,
-                from: 'arielgonzalezayala@gmail.com',
-                subject: 'Confirmá tu dirección de mail',
-                text: 'Haz click en el link de confirmación',
-                html: `<h2>Te damos al bienvenida a Ataraxia! Por favor, clickeá el siguiente link para confirmar tu dirección de mail y unirte a nuestra página: <a href="http://localhost:3000/verify/${user._id}/${user.verify_code}">&lt;&lt;CLICK AQUI&gt;&gt;</a></h2>`,
-            }
             const createdUser = await User.create(user)
-            /*             await accountVerificationMail(createdUser, res) */
             req.body.success = true
             req.body.sc = 201
             req.body.data = 'Usuario creado con éxito!'
-            /*             await sgMail.send(message) */
+            await accountVerificationMail(createdUser, res)
             return defaultResponse(req, res)
         } catch (error) {
             next(error)
