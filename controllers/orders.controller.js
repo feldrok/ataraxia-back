@@ -6,18 +6,22 @@ import defaultResponse from '../config/defaultResponse.js'
 const controller = {
     create: async (req, res, next) => {
         const { user } = req
-        const { id } = req.params
         try {
             const cart = await Cart.findOne({ user_id: user.id })
             if (cart) {
                 const total = cart.total_price
                 const order = {
                     user_id: user.id,
-                    cart_id: id,
+                    products: cart.products,
                     statusOrder: 'Approved',
                     total_price: total,
                 }
                 await Order.create(order)
+                await Cart.findOneAndUpdate(
+                    { user_id: user.id },
+                    { $set: { products: [], total_price: 0, coupon_id: null } },
+                    { new: true }
+                )
                 req.body.success = true
                 req.body.sc = 201
                 req.body.data = 'Order created successfully'
