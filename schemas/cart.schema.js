@@ -10,6 +10,7 @@ export const createSchema = Joi.object({
 export const updateSchema = Joi.object({
     product_id: Joi.objectId().required(),
     quantity: Joi.number().required(),
+    coupon_id: Joi.objectId()
 })
 
 export const deleteProductSchema = Joi.object({

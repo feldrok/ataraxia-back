@@ -20,12 +20,16 @@ export const updateSchema = Joi.object({
         'string.min': 'La descripción debe tener al menos 3 caracteres',
         'string.max': 'La descripción debe tener menos de 500 caracteres',
     }),
-    image: Joi.array().items(
-        Joi.string().required().uri().messages({
-            'any.required': 'La imagen es requerida',
-            'string.empty': 'La imagen no puede estar vacía',
-        })
-    ),
+    image: Joi.array()
+        .required()
+        .items(
+            Joi.string().uri().messages({
+                'any.required': 'La imagen es requerida',
+                'string.empty': 'La imagen no puede estar vacía',
+                'string.base':
+                    'La imagen no puede contener caracteres especiales',
+            })
+        ),
     abv: Joi.number().min(0).max(100).messages({
         'number.min': 'El ABV debe ser mayor a cero',
         'number.max': 'El ABV debe ser menor o igual a 100',
@@ -54,9 +58,8 @@ export const updateSchema = Joi.object({
         'number.base': 'El stock no puede contener caracteres especiales',
     }),
     category_id: Joi.objectId().required().messages({
-        'any.required': 'La categoria es requerida',
-        'object.empty': 'La categoria no puede estar vacía',
-        'object.base': 'La categoria no puede contener caracteres especiales',
+        'any.required': 'La categoría es requerida',
+        'object.empty': 'La categoría no puede estar vacía',
     }),
     size: Joi.number().min(0).messages({
         'number.min': 'El tamaño debe ser mayor a cero',

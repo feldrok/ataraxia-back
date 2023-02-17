@@ -1,4 +1,5 @@
 import { Cart } from '../models/Cart.model.js'
+import { Coupon } from '../models/Coupon.model.js'
 import { Product } from '../models/Product.model.js'
 import defaultResponse from '../config/defaultResponse.js'
 import mongoose from 'mongoose'
@@ -60,20 +61,20 @@ const controller = {
                 id = mongoose.Types.ObjectId(id)
             }
             const { product_id, quantity } = req.body
-            let cart = await Cart.find({ user_id: id }).populate(
+            let cart = await Cart.findOne({ user_id: id }).populate(
                 'products.product_id'
             )
-            const cartProducts = cart[0].products.map(
+            const cartProducts = cart.products.map(
                 (product) => product.product_id
             )
             const updatedProduct = cartProducts.find(
                 (product) => product._id.toString() === product_id
             )
             if (updatedProduct) {
-                let cart = await Cart.find({ user_id: id }).populate(
+                let cart = await Cart.findOne({ user_id: id }).populate(
                     'products.product_id'
                 )
-                const updatedCart = cart[0].products.map((product) => {
+                const updatedCart = cart.products.map((product) => {
                     if (product.product_id._id.toString() === product_id) {
                         return {
                             product_id: updatedProduct._id,
@@ -91,10 +92,10 @@ const controller = {
                     { $set: { products: updatedCart } },
                     { new: true }
                 )
-                cart = await Cart.find({ user_id: id }).populate(
+                cart = await Cart.findOne({ user_id: id }).populate(
                     'products.product_id'
                 )
-                const productsPrice = cart[0].products.map(
+                const productsPrice = cart.products.map(
                     (product) => product.product_id.price
                 )
                 const productsQuantity = cart[0].products.map(
@@ -150,10 +151,10 @@ const controller = {
                 id = mongoose.Types.ObjectId(id)
             }
             const { product_id, quantity } = req.body
-            let cart = await Cart.find({ user_id: id }).populate(
+            let cart = await Cart.findOne({ user_id: id }).populate(
                 'products.product_id'
             )
-            const cartProducts = cart[0].products.map(
+            const cartProducts = cart.products.map(
                 (product) => product.product_id
             )
 
@@ -161,10 +162,10 @@ const controller = {
                 (product) => product._id.toString() === product_id
             )
             if (updatedProduct) {
-                let cart = await Cart.find({ user_id: id }).populate(
+                let cart = await Cart.findOne({ user_id: id }).populate(
                     'products.product_id'
                 )
-                const updatedCart = cart[0].products.map((product) => {
+                const updatedCart = cart.products.map((product) => {
                     if (product.product_id._id.toString() === product_id) {
                         return {
                             product_id: updatedProduct._id,
@@ -182,13 +183,13 @@ const controller = {
                     { $set: { products: updatedCart } },
                     { new: true }
                 )
-                cart = await Cart.find({ user_id: id }).populate(
+                cart = await Cart.findOne({ user_id: id }).populate(
                     'products.product_id'
                 )
-                const productsPrice = cart[0].products.map(
+                const productsPrice = cart.products.map(
                     (product) => product.product_id.price
                 )
-                const productsQuantity = cart[0].products.map(
+                const productsQuantity = cart.products.map(
                     (product) => product.quantity
                 )
                 const total = productsPrice.reduce(
@@ -198,7 +199,13 @@ const controller = {
                 )
                 cart = await Cart.findOneAndUpdate(
                     { user_id: id },
-                    { $set: { products: updatedCart, total_price: total } },
+                    {
+                        $set: {
+                            products: updatedCart,
+                            total_price: total,
+                            coupon_id: null,
+                        },
+                    },
                     { new: true }
                 )
                 req.body.success = true
@@ -214,6 +221,9 @@ const controller = {
                                 product_id: product_id,
                                 quantity: quantity,
                             },
+                        },
+                        $set: {
+                            coupon_id: null,
                         },
                     },
                     { new: true }
@@ -239,7 +249,7 @@ const controller = {
                 { $pull: { products: { product_id } } },
                 { new: true }
             )
-            cart = await Cart.find({ user_id: id })
+            cart = await Cart.findOne({ user_id: id })
             const cartProducts = cart[0].products.map(
                 (product) => product.product_id
             )
@@ -256,7 +266,13 @@ const controller = {
             )
             cart = await Cart.findOneAndUpdate(
                 { user_id: id },
-                { $set: { products: cart[0].products, total_price: total } },
+                {
+                    $set: {
+                        products: cart.products,
+                        total_price: total,
+                        coupon_id: null,
+                    },
+                },
                 { new: true }
             ).populate('products.product_id')
             req.body.success = true
@@ -282,6 +298,47 @@ const controller = {
             req.body.sc = 200
             req.body.data = cart
             return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
+    apply_coupon: async (req, res, next) => {
+        try {
+            const { id } = req.params
+            const { coupon_name } = req.body
+            const coupon = await Coupon.findOne({ coupon: coupon_name })
+            console.log(coupon)
+            if (coupon) {
+                let cart = await Cart.findOne({ _id: id })
+                let total = cart.total_price
+                let discount = (total * coupon.discount) / 100
+                if (!cart.coupon_id) {
+                    cart = await Cart.findOneAndUpdate(
+                        { _id: id },
+                        {
+                            $set: {
+                                total_price: total - discount,
+                                coupon_id: coupon._id,
+                            },
+                        },
+                        { new: true }
+                    )
+                    req.body.success = true
+                    req.body.sc = 200
+                    req.body.data = cart
+                    return defaultResponse(req, res)
+                } else {
+                    req.body.success = false
+                    req.body.sc = 404
+                    req.body.data = 'Coupon already applied'
+                    return defaultResponse(req, res)
+                }
+            } else {
+                req.body.success = false
+                req.body.sc = 404
+                req.body.data = 'Coupon not found'
+                return defaultResponse(req, res)
+            }
         } catch (error) {
             next(error)
         }

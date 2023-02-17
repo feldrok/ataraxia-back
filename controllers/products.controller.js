@@ -2,6 +2,17 @@ import { Product } from '../models/Product.model.js'
 import defaultResponse from '../config/defaultResponse.js'
 
 const controller = {
+    create: async (req, res, next) => {
+        try {
+            const product = await Product.create(req.body)
+            req.body.success = true
+            req.body.sc = 201
+            req.body.data = product
+            return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
     get_products: async (req, res, next) => {
         let query = {}
         if (req.query.category_id) {
@@ -10,7 +21,7 @@ const controller = {
         try {
             const products = await Product.find(query).populate('category_id')
             if (products.length > 0) {
-                req.body.succes = true
+                req.body.success = true
                 req.body.sc = 200
                 req.body.data = products
                 return defaultResponse(req, res)
