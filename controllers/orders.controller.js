@@ -1,27 +1,48 @@
 import { Cart } from '../models/Cart.model.js'
 import { Order } from '../models/Order.model.js'
-import { User } from '../models/User.model.js'
 import defaultResponse from '../config/defaultResponse.js'
 
 const controller = {
     create: async (req, res, next) => {
-        const { user } = req
-        const { id } = req.params
         try {
-            const cart = await Cart.findOne({ user_id: user.id })
+            const { id } = req.params
+            const { preference_id, status } = req.query
+            const cart = await Cart.findOne({ user_id: id })
             if (cart) {
                 const total = cart.total_price
                 const order = {
-                    user_id: user.id,
-                    cart_id: id,
-                    statusOrder: 'Approved',
+                    user_id: id,
+                    products: cart.products,
+                    statusOrder: status,
                     total_price: total,
+                    preference_id: preference_id,
                 }
-                await Order.create(order)
-                req.body.success = true
-                req.body.sc = 201
-                req.body.data = 'Order created successfully'
-                return defaultResponse(req, res)
+                const orderExists = await Order.findOne({
+                    preference_id: preference_id,
+                })
+                if (orderExists) {
+                    req.body.success = false
+                    req.body.sc = 400
+                    req.body.data = 'Order already exists'
+                    return defaultResponse(req, res)
+                } else {
+                    await Order.create(order)
+                    await Cart.findOneAndUpdate(
+                        { user_id: id },
+                        {
+                            $set: {
+                                products: [],
+                                total_price: 0,
+                                coupon_id: null,
+                            },
+                        },
+                        { new: true }
+                    )
+                    req.body.success = true
+                    req.body.sc = 201
+                    req.body.data = 'Order created successfully'
+                    return defaultResponse(req, res)
+                }
             } else {
                 req.body.success = false
                 req.body.sc = 404
@@ -76,6 +97,25 @@ const controller = {
             req.body.sc = 200
             req.body.data = orders
             return defaultResponse(req, res)
+        } catch (error) {
+            next(error)
+        }
+    },
+    get_order: async (req, res, next) => {
+        const { id } = req.params
+        try {
+            const order = await Order.findOne({ preference_id: id }).populate('products.product_id')
+            if (order) {
+                req.body.success = true
+                req.body.sc = 200
+                req.body.data = order
+                return defaultResponse(req, res)
+            } else {
+                req.body.success = false
+                req.body.sc = 404
+                req.body.data = 'Order not found'
+                return defaultResponse(req, res)
+            }
         } catch (error) {
             next(error)
         }

@@ -9,7 +9,7 @@ async function ratingExists(req, res, next) {
         product_id: product_id,
     })
     if (reaction) {
-        if (reaction.rating === rating) {
+        if (rating === 0) {
             await Rating.findByIdAndDelete(reaction._id)
             req.body.success = true
             req.body.sc = 200
