@@ -43,7 +43,6 @@ const controller = {
             },
         }
         preference.items = items
-
         mercadopago.preferences
             .create(preference)
             .then(function (response) {
