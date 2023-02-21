@@ -15,7 +15,15 @@ async function ratingExists(req, res, next) {
             req.body.sc = 200
             req.body.data = "Rating eliminado"
             return defaultResponse(req, res)
-        } else {
+        } 
+        else if (rating === reaction.rating) {
+            await Rating.findByIdAndDelete(reaction._id)
+            req.body.success = true
+            req.body.sc = 200
+            req.body.data = "Rating eliminado"
+            return defaultResponse(req, res)
+        } 
+        else {
             await Rating.findOneAndUpdate(
                 { _id: reaction._id },
                 { $set: { rating: rating } },
