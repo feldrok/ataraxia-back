@@ -249,14 +249,11 @@ const controller = {
                 { $pull: { products: { product_id } } },
                 { new: true }
             )
-            cart = await Cart.findOne({ user_id: id })
-            const cartProducts = cart[0].products.map(
-                (product) => product.product_id
+            cart = await Cart.findOne({ user_id: id }).populate('products.product_id')
+            const productsPrice = cart.products.map(
+                (product) => product.product_id.price
             )
-            const productsPrice = await (
-                await Product.find({ _id: { $in: cartProducts } })
-            ).map((product) => product.price)
-            const productsQuantity = cart[0].products.map(
+            const productsQuantity = cart.products.map(
                 (product) => product.quantity
             )
             const total = productsPrice.reduce(
