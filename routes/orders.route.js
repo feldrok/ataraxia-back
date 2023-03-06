@@ -11,7 +11,7 @@ const { create, get_orders_user, update_order_user, get_orders, get_order } = co
 
 router.post('/:id', validator(schema), orderExists, create)
 router.get('/all', passport.authenticate("jwt", { session: false }), isAdmin, get_orders)
-router.get('/', get_orders_user)
+router.get('/',passport.authenticate("jwt", { session: false }), get_orders_user)
 router.get('/:id', get_order)
 router.put('/order/:id', passport.authenticate("jwt", { session: false }), isAdmin, update_order_user)
 
